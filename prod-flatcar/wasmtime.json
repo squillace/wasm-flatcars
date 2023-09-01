@@ -29,14 +29,24 @@
   "systemd": {
     "units": [
       {
-        "contents": "[Unit]\nDescription=wasmtime sysupdate checker\n[Service]\nRestart=no\nType=oneshot\nExecStart=/usr/lib/systemd/systemd-sysupdate -C wasmtime update\nExecStartPost=systemctl restart systemd-sysext\n",
+        "contents": "[Unit]\nDescription=wasmtime sysupdate checker\n[Service]\nRestart=no\nType=oneshot\nExecStart=/usr/lib/systemd/systemd-sysupdate -C wasmtime update\n",
         "enabled": false,
         "name": "sysext-wasmtime-update-check.service"
       },
       {
-        "contents": "[Unit]\nDescription=wasmtime sysupdate checker timer\n[Timer]\nOnCalendar=*-*-* *:*:00\nPersistent=true\n[Install]\nWantedBy=timers.target",
+        "contents": "[Unit]\nDescription=wasmtime sysupdate checker timer\n[Timer]\nOnCalendar=*-*-* *:*:00\nPersistent=true\n[Install]\nWantedBy=timers.target\n",
         "enabled": true,
         "name": "sysext-wasmtime-update-check.timer"
+      },
+      {
+        "contents": "[Unit]\nDescription=Trigger a restart of systemd-sysext to auto-merge new / updated extensions.\n[Path]\nPathModified=/etc/extensions\nUnit=sysext-restart.service\n[Install]\nWantedBy=paths.target\n",
+        "enabled": true,
+        "name": "sysext-update-watcher.path"
+      },
+      {
+        "contents": "[Unit]\nDescription=Restart systemd-sysext, e.g. to merge new / updated sysexts.               \n[Service]\nRestart=no\nType=oneshot\nExecStart=systemctl restart systemd-sysext\n",
+        "enabled": false,
+        "name": "sysext-restart.service"
       }
     ]
   }

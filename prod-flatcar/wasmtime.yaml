@@ -43,7 +43,6 @@ systemd:
         Restart=no
         Type=oneshot
         ExecStart=/usr/lib/systemd/systemd-sysupdate -C wasmtime update
-        ExecStartPost=systemctl restart systemd-sysext
 
     - name: sysext-wasmtime-update-check.timer
       enabled: true
@@ -56,3 +55,24 @@ systemd:
         Persistent=true
         [Install]
         WantedBy=timers.target
+
+    - name: sysext-update-watcher.path                                                   
+      enabled: true
+      contents: |                                                                        
+        [Unit]
+        Description=Trigger a restart of systemd-sysext to auto-merge new / updated extensions.
+        [Path]
+        PathModified=/etc/extensions
+        Unit=sysext-restart.service
+        [Install]
+        WantedBy=paths.target
+
+    - name: sysext-restart.service
+      enabled: false
+      contents: |
+        [Unit]
+        Description=Restart systemd-sysext, e.g. to merge new / updated sysexts.               
+        [Service]
+        Restart=no
+        Type=oneshot
+        ExecStart=systemctl restart systemd-sysext
