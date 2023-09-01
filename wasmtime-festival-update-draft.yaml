@@ -33,15 +33,7 @@ storage:
 
 systemd:
   units:
-    - name: systemd-sysupdate.timer
-      enabled: true
-    - name: systemd-sysupdate.service
-      dropins:
-        - name: sysext.conf
-          contents: |
-            [Service]
-            ExecStartPost=systemctl restart systemd-sysext  
-            
+           
     - name: sysext-wasmtime-update-check.service
       enabled: false
       contents: |
@@ -50,6 +42,7 @@ systemd:
         [Service]
         Restart=no
         ExecStart=/usr/lib/systemd/systemd-sysupdate -C wasmtime update
+        
     - name: sysext-wasmtime-update-check.timer
       enabled: true
       contents: |
