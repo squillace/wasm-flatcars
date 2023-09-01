@@ -20,16 +20,16 @@ storage:
           Path=/opt/extensions-store/
           CurrentSymlink=/etc/extensions/wasmtime.raw
     # installs wasmtime version on first boot
-    - path: /opt/extensions-store/wasmtime-v10.0.1-x86_64.raw
+    - path: /opt/extensions-store/wasmtime-v10.0.1-x86-64.raw
       mode: 0420
       contents:
-        source: https://flatcarwasm.blob.core.windows.net/raw/wasmtime-v10.0.1-x86_64.raw
+        source: https://flatcarwasm.blob.core.windows.net/raw/wasmtime-v10.0.1-x86-64.raw
 
 
   links:
     # creates a symlink to the current version so we can update easily
     - path: /etc/extensions/wasmtime.raw
-      target: /opt/extensions-store/wasmtime-v10.0.1-x86_64.raw
+      target: /opt/extensions-store/wasmtime-v10.0.1-x86-64.raw
 
 systemd:
   units:
