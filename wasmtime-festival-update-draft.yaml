@@ -41,15 +41,17 @@ systemd:
         Description=wasmtime sysupdate checker
         [Service]
         Restart=no
+        Type=oneshot
         ExecStart=/usr/lib/systemd/systemd-sysupdate -C wasmtime update
-        
+        ExecStartPost=systemctl restart systemd-sysext
+
     - name: sysext-wasmtime-update-check.timer
       enabled: true
-      contents: |
+       # run every minute for demo purposes
+       contents: |
         [Unit]
         Description=wasmtime sysupdate checker timer
         [Timer]
-		# run every minute for demo purposes
         OnCalendar=*-*-* *:*:00
         Persistent=true
         [Install]
