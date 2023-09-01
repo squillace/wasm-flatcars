@@ -1,0 +1,72 @@
+variant: flatcar
+version: 1.0.0
+
+storage:
+
+  files: // to handle fast updates
+    - path: /etc/sysupdate.d/noop.conf
+      contents:
+        inline: |
+          [Source]
+          Type=regular-file
+          Path=/
+          MatchPattern=invalid@v.raw
+          [Target]
+          Type=regular-file
+          Path=/
+
+    - path: /etc/sysupdate.wasmtime.d/wasmtime.conf
+      contents:
+        inline: |
+          [Transfer]
+          Verify=false
+          [Source]
+          Type=url-file
+          Path=https://flatcarwasm.blob.core.windows.net/raw/
+          MatchPattern=wasmtime-@v-%a.raw
+          [Target]
+          InstancesMax=3
+          Type=regular-file
+          Path=/opt/extensions-store/
+          CurrentSymlink=/etc/extensions/wasmtime.raw
+
+    - path: /opt/extensions-store/wasmtime-v10.0.1-x86_64.raw
+      mode: 0420
+      contents:
+        source: https://flatcarwasm.blob.core.windows.net/raw/wasmtime-v10.0.1-x86_64.raw
+
+
+  links:
+    - path: /etc/extensions/wasmtime.raw
+      target: /opt/extensions-store/wasmtime-v10.0.1-x86_64.raw
+
+systemd:
+  units:
+    - name: systemd-sysupdate.timer
+      enabled: true
+    - name: systemd-sysupdate.service
+      dropins:
+        - name: sysext.conf
+          contents: |
+            [Service]
+            ExecStartPost=systemctl restart systemd-sysext  
+            
+    - name: sysext-wasmtime-update-check.service
+      enabled: false
+      contents: |
+        [Unit]
+        Description=wasmtime sysupdate checker
+        [Service]
+        Restart=no
+        ExecStart=/usr/lib/systemd/systemd-sysupdate -C wasmtime update
+    - name: sysext-wasmtime-update-check.timer
+      enabled: true
+      contents: |
+        [Unit]
+        Description=wasmtime sysupdate checker timer
+        [Timer]
+		# run daily at 5am
+        OnCalendar=*-*-* 3:00:00
+        Persistent=true
+        [Install]
+        WantedBy=timers.target
