@@ -47,8 +47,8 @@ systemd:
 
     - name: sysext-wasmtime-update-check.timer
       enabled: true
-       # run every minute for demo purposes
-       contents: |
+      # run every minute for demo purposes
+      contents: |
         [Unit]
         Description=wasmtime sysupdate checker timer
         [Timer]
