@@ -22,6 +22,14 @@
                     "source":"https://flatcarwasm.blob.core.windows.net/raw/spin-test.raw"
                 },
                 "mode":420
+            },
+            {
+                "path":"/etc/extensions/slight-test.raw",
+                "contents":
+                {
+                    "source":"https://flatcarwasm.blob.core.windows.net/raw/slight-test.raw"
+                },
+                "mode":420
             }
         ]
     }
